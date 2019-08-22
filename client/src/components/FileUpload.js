@@ -1,5 +1,6 @@
 import React, { Fragment, useState } from 'react';
 import Message from './Message';
+import Progress from './Progress';
 import axios from 'axios';
 
 const FileUpload = () => {
@@ -7,6 +8,7 @@ const FileUpload = () => {
   const [filename, setFilename] = useState('Choose File');
   const [uploadedFile, setUploadedFile] = useState({});
   const [message, setMessage] = useState('');
+  const [uploadPercentage, setUploadPercentage] = useState(0);
 
   const onChange = e => {
     setFile(e.target.files[0]);
@@ -22,6 +24,10 @@ const FileUpload = () => {
       const res = await axios.post('/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
+        },
+        onUploadProgress: ProgressEvent => {
+          setUploadPercentage(parseInt(Math.round((ProgressEvent.loaded * 100) / ProgressEvent.total)))
+          setTimeout(() => setUploadPercentage(0), 5000);
         }
       });
 
@@ -48,6 +54,8 @@ const FileUpload = () => {
           <input type="file" className="custom-file-input" id="customFile" onChange={onChange}/>
           <label className="custom-file-label" htmlFor="customFile">{filename}</label>
         </div>
+
+        <Progress percentage={uploadPercentage} />
 
         <div className="col-3 mx-auto">
           <input type="submit" value="Upload" className="btn btn-primary btn-block mt-4" />
