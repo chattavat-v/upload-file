@@ -2,6 +2,7 @@ import React, { Fragment, useState } from 'react';
 import { storageRef } from '../firebase';
 import Message from './Message';
 import Progress from './Progress';
+import axios from 'axios';
 
 const FileUploadFirebase = () => {
   const [file, setFile] = useState('');
@@ -31,11 +32,32 @@ const FileUploadFirebase = () => {
         setMessage(error);
       }, 
       () => {
-        uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+        uploadTask.snapshot.ref.getDownloadURL().then( async (downloadURL) => {
           // console.log('File available at', downloadURL);
-          setUploadedFile({ filename, downloadURL });
-          setMessage('Upload File Complete');
-          setTimeout(() => setMessage(''), 5000);
+          const objImage = {
+            filename,
+            downloadURL
+          }
+
+          try {
+            const config = {
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            };
+
+            const res = await axios.post('/firebase', objImage, config);
+            
+            setUploadedFile({ filename, downloadURL });
+            setMessage(res.data.msg);
+            setTimeout(() => setMessage(''), 5000);
+          } catch (err) {
+            if (err.response.status === 500) {
+              setMessage('There was a problem with the server');
+            } else {
+              setMessage(err.response.data.msg);
+            }
+          }
         });
       }
     );

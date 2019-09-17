@@ -3,6 +3,13 @@ const fileUpload = require('express-fileupload');
 
 const app = express();
 
+// Init Middleware
+app.use(
+  express.json({
+    extended: false
+  })
+);
+
 app.use(fileUpload());
 
 // Upload Endpoint
@@ -20,6 +27,12 @@ app.post('/upload', (req, res) => {
     }
     res.json({ fileName: file.name, filePath: `/uploads/${file.name}`});
   });
+});
+
+// Upload with firebase 
+app.post('/firebase', (req, res) => {
+  console.log(req.body);
+  res.json({ msg: 'Upload in firebase success' });
 });
 
 app.listen(5000, () => console.log("Server Started..."));
