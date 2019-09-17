@@ -1,5 +1,11 @@
 upload-file
 
+Document add image
+https://firebase.google.com/docs/storage/web/upload-files?authuser=1
+
+Document Delete image
+https://firebase.google.com/docs/storage/web/delete-files?authuser=1
+
 path: /upload-file/client/src/firebase/index.js
 
 import firebase from 'firebase/app';
